@@ -20,7 +20,7 @@ namespace DevCars.Domain.Entities
             Orders = new List<Order>();
         }
 
-        public void Purhase(Order order)
+        public void Purchase(Order order)
         {
             Orders.Add(order);
         }

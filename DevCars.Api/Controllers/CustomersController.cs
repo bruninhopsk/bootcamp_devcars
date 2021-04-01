@@ -47,12 +47,12 @@ namespace DevCars.Api.Controllers
 
             var customer = Context.Customers.SingleOrDefault(x => x.Id.Equals(orderInputModel.CustomerId));
 
-            customer.Purhase(order);
+            customer.Purchase(order);
 
             return CreatedAtAction(nameof(GetOrder), new { id = customer.Id, orderId = order.Id }, orderInputModel);
         }
 
-        //GET api/customers/id/orders
+        //GET api/customers/id/orders/orderId
         [HttpGet("{id}/orders/{orderId}")]
         public IActionResult GetOrder(int id, int orderId)
         {
@@ -68,7 +68,7 @@ namespace DevCars.Api.Controllers
             var extraItems = order
                 .ExtraItems
                 .Select(x => x.Description)
-                 .ToList();
+                .ToList();
 
             var orderViewModel = new OrderDetailsViewModel(order.CustomerId, order.CarId, extraItems, order.TotalCost);
 

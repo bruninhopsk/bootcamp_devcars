@@ -33,7 +33,7 @@ namespace DevCars.Api.Controllers
         [HttpGet("{id}")]
         public ActionResult GetById(int id)
         {
-            var car = Context.Cars.Find(x => x.Id.Equals(id));
+            var car = Context.Cars.SingleOrDefault(x => x.Id.Equals(id));
 
             if (car == null)
             {
