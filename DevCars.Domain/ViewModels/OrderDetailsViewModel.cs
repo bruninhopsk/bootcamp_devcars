@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DevCars.Domain.Entities;
 
 namespace DevCars.Domain.ViewModels
 {
@@ -6,10 +7,10 @@ namespace DevCars.Domain.ViewModels
     {
         public int CustomerId { get; set; }
         public int CarId { get; set; }
-        public List<string> ExtraItems { get; set; }
+        public List<ExtraOrderItem> ExtraItems { get; set; }
         public decimal TotalCost { get; set; }
 
-        public OrderDetailsViewModel(int customerId, int carId, List<string> extraItems, decimal totalCost)
+        public OrderDetailsViewModel(int customerId, int carId, List<ExtraOrderItem> extraItems, decimal totalCost)
         {
             CustomerId = customerId;
             CarId = carId;

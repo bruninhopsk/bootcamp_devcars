@@ -16,9 +16,10 @@ namespace DevCars.Domain.Entities
         public CarStatusEnum Status { get; private set; }
         public DateTime RegisteredAt { get; private set; }
 
-        public Car(int id, string vinCode, string brand, string model, int year, decimal price, string color, DateTime productionDate)
+        protected Car() { }
+
+        public Car(string vinCode, string brand, string model, int year, decimal price, string color, DateTime productionDate)
         {
-            Id = id;
             VinCode = vinCode;
             Brand = brand;
             Model = model;

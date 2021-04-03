@@ -1,6 +1,7 @@
-using DevCars.Infrastructure;
+using DevCars.Infrastructure.EntityFramework.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,14 +21,15 @@ namespace DevCars.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connectionString = Configuration.GetConnectionString("DevCars");
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "DevCars.Api", Version = "v1" });
             });
-
-            services.AddSingleton<DevCarsDbContext>();
+            services.AddDbContext<DevCarsDbContext>(opt => opt.UseSqlServer(connectionString));
+            // services.AddDbContext<DevCarsDbContext>(opt => opt.UseInMemoryDatabase("DevCars"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

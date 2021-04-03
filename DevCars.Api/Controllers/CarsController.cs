@@ -1,8 +1,9 @@
 using System.Linq;
 using DevCars.Domain.Entities;
+using DevCars.Domain.Enums;
 using DevCars.Domain.InputModels;
 using DevCars.Domain.ViewModels;
-using DevCars.Infrastructure;
+using DevCars.Infrastructure.EntityFramework.Context;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevCars.Api.Controllers
@@ -24,7 +25,9 @@ namespace DevCars.Api.Controllers
         {
             var cars = Context.Cars;
 
-            var carsViewModel = cars.Select(x => new CarItemViewModel(x.Id, x.Brand, x.Model, x.Price)).ToList();
+            var carsViewModel = cars.Where(x => x.Status == CarStatusEnum.Available)
+                                    .Select(x => new CarItemViewModel(x.Id, x.Brand, x.Model, x.Price, x.Status))
+                                    .ToList();
 
             return Ok(carsViewModel);
         }
@@ -58,7 +61,6 @@ namespace DevCars.Api.Controllers
         public ActionResult Post([FromBody] AddCarInputModel carInputModel)
         {
             var newCar = new Car(
-                4,
                 carInputModel.VinCode,
                 carInputModel.Brand,
                 carInputModel.Model,
@@ -68,8 +70,9 @@ namespace DevCars.Api.Controllers
                 carInputModel.ProductionDate);
 
             Context.Cars.Add(newCar);
+            Context.SaveChanges();
 
-            return CreatedAtAction(nameof(GetById), new { id = newCar.Id });
+            return CreatedAtAction(nameof(GetById), new { id = newCar.Id }, newCar);
         }
 
         //PUT api/cars/id
@@ -84,6 +87,7 @@ namespace DevCars.Api.Controllers
             }
 
             car.Update(carInputModel.Color, carInputModel.Price);
+            Context.SaveChanges();
 
             return NoContent();
         }
@@ -100,6 +104,7 @@ namespace DevCars.Api.Controllers
             }
 
             car.SetAsSuspended();
+            Context.SaveChanges();
 
             return NoContent();
         }
