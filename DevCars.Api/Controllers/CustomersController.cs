@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DevCars.Api.Controllers
 {
     [ApiController]
+    [Produces("application/json")]
     [Route("api/[controller]")]
     public class CustomersController : ControllerBase
     {

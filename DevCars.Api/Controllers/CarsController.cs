@@ -1,10 +1,13 @@
 using System.Linq;
+using Dapper;
 using DevCars.Domain.Entities;
 using DevCars.Domain.Enums;
 using DevCars.Domain.InputModels;
 using DevCars.Domain.ViewModels;
 using DevCars.Infrastructure.EntityFramework.Context;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace DevCars.Api.Controllers
 {
@@ -13,23 +16,36 @@ namespace DevCars.Api.Controllers
     public class CarsController : ControllerBase
     {
         public DevCarsDbContext Context { get; }
+        public string ConnectionString { get; }
 
-        public CarsController(DevCarsDbContext context)
+        public CarsController(DevCarsDbContext context, IConfiguration configuration)
         {
             Context = context;
+            ConnectionString = configuration.GetConnectionString("DevCars");
         }
 
         //GET api/cards
         [HttpGet]
         public ActionResult Get()
         {
-            var cars = Context.Cars;
+            // Query with Dapper
+            // using (var sqlConnection = new SqlConnection(ConnectionString))
+            // {
+            //     var query = "SELECT Id, Brand, Model, Price FROM Cars WHERE Status = 0";
+            //     var carsViewModel = sqlConnection.Query<CarItemViewModel>(query);
+            // }
 
-            var carsViewModel = cars.Where(x => x.Status == CarStatusEnum.Available)
-                                    .Select(x => new CarItemViewModel(x.Id, x.Brand, x.Model, x.Price, x.Status))
-                                    .ToList();
+            var cars = Context.Cars.ToList();
 
-            return Ok(carsViewModel);
+            if (cars.Count > 0)
+            {
+                var carsViewModel = cars.Where(x => x.Status == CarStatusEnum.Available)
+                                        .Select(x => new CarItemViewModel(x.Id, x.Brand, x.Model, x.Price, x.Status))
+                                        .ToList();
+                return Ok(carsViewModel);
+            }
+
+            return NotFound();
         }
 
         //GET api/cars/id
@@ -88,6 +104,13 @@ namespace DevCars.Api.Controllers
 
             car.Update(carInputModel.Color, carInputModel.Price);
             Context.SaveChanges();
+
+            /* Command with Dapper
+             using (var sqlConnection = new SqlConnection(ConnectionString))
+             {
+                 var command = "UPDATE Cars SET Color = @Color, Price = @price WHERE Id = @id";
+                 sqlConnection.Execute(command, new { color = car.Color, price = car.Price, id = car.Id });
+             } */
 
             return NoContent();
         }
