@@ -24,7 +24,7 @@ namespace DevCars.Api.Controllers
             ConnectionString = configuration.GetConnectionString("DevCars");
         }
 
-        //GET api/cards
+        //GET api/cars
         [HttpGet]
         public ActionResult Get()
         {
